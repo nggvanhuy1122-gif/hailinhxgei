@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trêu Hải Linh 😘</title>
+<style>
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    background: linear-gradient(135deg, #ffb6c1, #ff69b4, #dda0dd, #ffc0cb);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+    overflow: hidden;
+}
+@keyframes gradientBG {
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
+}
+.box {
+    width: 90%;
+    max-width: 600px;
+    padding: 30px;
+    margin: 20px 0;
+    border-radius: 25px;
+    background: rgba(255,255,255,0.8);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+.line {
+    font-size: 24px;
+    color: #ff1493;
+    margin: 10px 0;
+    white-space: pre-wrap;
+}
+.blink {
+    animation: blink 1s infinite;
+}
+@keyframes blink {
+    0%,50%,100% { opacity: 1; }
+    25%,75% { opacity: 0; }
+}
+.heart {
+    position: absolute;
+    font-size: 20px;
+    color: #ff69b4;
+    pointer-events: none;
+    animation: floatHeart 4s linear forwards;
+}
+@keyframes floatHeart {
+    0% { transform: translateY(0) scale(1); opacity:1; }
+    100% { transform: translateY(-300px) scale(1.5); opacity:0; }
+}
+.instruction {
+    font-size: 16px;
+    color: #800000;
+    margin-top: 10px;
+}
+#passwordScreen {
+    position: fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background: rgba(255,182,193,0.95);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+#passwordScreen input {
+    padding: 10px;
+    font-size: 18px;
+    border-radius: 10px;
+    border: 1px solid #ff1493;
+}
+#passwordScreen button {
+    padding: 10px 20px;
+    margin-top: 10px;
+    font-size: 18px;
+    border-radius: 10px;
+    border: none;
+    background-color: #ff1493;
+    color: white;
+    cursor: pointer;
+}
+#passwordScreen p {
+    margin-top: 10px;
+    color: #800000;
+}
+</style>
+</head>
+<body>
+
+<!-- Màn hình mật khẩu -->
+<div id="passwordScreen">
+    <h2>Nhập mật khẩu để vào trang 💖</h2>
+    <input type="password" id="passwordInput" placeholder="Mật khẩu">
+    <button id="passwordBtn">Xác nhận</button>
+    <p>Gợi ý: Ngày sinh của vanhuy</p>
+    <p id="passwordError" style="color:red;"></p>
+</div>
+
+<!-- Nội dung chính -->
+<div class="box" id="topBox" style="display:none;"></div>
+<div class="box" id="bottomBox" style="display:none;"></div>
+<audio id="bgMusic" loop>
+    <source src="https://files.catbox.moe/7xzihl.mp3" type="audio/mpeg">
+    Trình duyệt của bạn không hỗ trợ audio.
+</audio>
+<div class="instruction" style="display:none;">Hải Linh xinhgai 💖</div>
+
+<script>
+// Khung trên
+const topLines = [
+    "Anh cho em 4 từ: chó, em, xương, ăn. Em xếp thành 1 câu đi. Xếp đúng có quà 💝"
+];
+
+// Khung dưới: lời nhạc
+const bottomLines = [
+    "Cuộc tình xưa phai dấu từ một buổi chiều",
+    "Thật buồn mây xám theo nhau về",
+    "Sầu thương giăng kín lấp lối dĩ vãng tương lai mịt mù",
+    "Bóng anh đã quá xa vời",
+    "Một mình lê chân lạc loài",
+    "Lang thang đường về mù khơi",
+    "",
+    "Còn gì đâu anh hỡi từng kỉ niệm,",
+    "Nhạt nhoà theo tháng năm mong chờ",
+    "Về đâu đêm tối với bóng dáng ấy tan theo làn mây",
+    "Giấc mơ nay đã phai tàn",
+    "Cuộc tình ra đi vội vàng",
+    "Con tim này đành vỡ tan."
+];
+
+const topBox = document.getElementById('topBox');
+const bottomBox = document.getElementById('bottomBox');
+const music = document.getElementById('bgMusic');
+const instruction = document.querySelector('.instruction');
+let bottomIndex = 0;
+let visibleLines = [];
+
+// Gõ từng chữ khung trên
+function typeTop(index=0){
+    if(index >= topLines.length) return;
+    const div = document.createElement('div');
+    div.className = 'line';
+    topBox.appendChild(div);
+    let charIndex = 0;
+    const line = topLines[index];
+    const interval = setInterval(()=>{
+        div.textContent += line[charIndex];
+        charIndex++;
+        if(charIndex >= line.length){
+            clearInterval(interval);
+            setTimeout(()=>typeTop(index+1),200);
+        }
+    },50);
+}
+
+// Gõ từng chữ khung dưới với delay đặc biệt
+function typeBottom() {
+    if(bottomIndex >= bottomLines.length) return;
+    const div = document.createElement('div');
+    div.className = 'line blink';
+    bottomBox.appendChild(div);
+    visibleLines.push(div);
+
+    let charIndex = 0;
+    const line = bottomLines[bottomIndex];
+    const interval = setInterval(() => {
+        div.textContent += line[charIndex];
+        charIndex++;
+        if(charIndex >= line.length) {
+            clearInterval(interval);
+            bottomIndex++;
+
+            if(visibleLines.length > 3){
+                const removeDiv = visibleLines.shift();
+                bottomBox.removeChild(removeDiv);
+            }
+
+            let delay = 1500;
+            if(line.includes("Lang thang đường về mù khơi")) delay = 4000;
+
+            setTimeout(typeBottom, delay);
+        }
+    },50);
+}
+
+// Tạo trái tim
+function createHeart(){
+    const heart = document.createElement('div');
+    heart.className = 'heart';
+    heart.style.left = Math.random()*window.innerWidth + 'px';
+    heart.style.top = window.innerHeight + 'px';
+    heart.textContent = '💖';
+    document.body.appendChild(heart);
+    setTimeout(()=>document.body.removeChild(heart),4000);
+}
+
+// Bay liên tục
+let heartInterval;
+function startHearts(){
+    heartInterval = setInterval(createHeart,300);
+}
+
+// Mật khẩu
+document.getElementById('passwordBtn').addEventListener('click', ()=>{
+    const val = document.getElementById('passwordInput').value;
+    if(val==='0102'){
+        document.getElementById('passwordScreen').style.display='none';
+        topBox.style.display='block';
+        bottomBox.style.display='block';
+        instruction.style.display='block';
+        typeTop(); // Khung trên gõ từng chữ
+
+        document.body.addEventListener('click', function start(){
+            music.play();          // nhạc chạy ngay
+            startHearts();         // trái tim bay ngay
+            setTimeout(typeBottom,4000); // lời nhạc 4s sau
+            document.body.removeEventListener('click', start);
+        });
+    } else {
+        document.getElementById('passwordError').textContent='Sai mật khẩu 😢';
+    }
+});
+</script>
+</body>
+</html>
